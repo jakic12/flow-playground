@@ -37,11 +37,11 @@ export const SidebarItem = styled.div<ItemProps>`
       }
     `}
 
-  cursor: pointer;
+  /*cursor: pointer;
   &:hover,
   &:focus {
     background: rgba(255, 255, 255, 0.75);
-  }
+  } */
   text-decoration: none;
   display:flex;
   align-items: center;

@@ -12,6 +12,8 @@ import Avatar from "components/Avatar";
 import styled from "@emotion/styled";
 import {ExportButton} from "components/ExportButton";
 import {getParams, isUUUID} from "../util/url";
+import theme from "../theme";
+import { IconArrow } from "./Icons";
 
 function getDeployedContracts(account: Account): string {
   const contracts = account.deployedContracts.map(
@@ -28,16 +30,60 @@ export const AccountCard = styled.div`
   width: 100%;
 `;
 
+const Dropdown = styled.div`
+`;
+
+type ItemProps = {
+  active?: boolean;
+  children?: React.ReactNode;
+};
+const DropdownItem = styled.div<ItemProps>`
+  padding:1em;
+  padding-left:3em;
+
+  background:white;
+  &:hover{
+    cursor:pointer;
+  }
+  &:hover,
+  &:focus {
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  ${p =>  p.active && `background: rgba(255, 255, 255, 0.75);
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 6px;
+    bottom: 6px;
+    width: 6px;
+    border-radius: 0 3px 3px 0;
+    background: ${theme.colors.primary};
+  }`};
+  position: relative;
+`
+
+const IconArrowContainer = styled.div<{ open?: boolean;}>`
+  align-self:center;
+  ${p => p.open ? `transform: rotate(-180deg)` : `transform: rotate(-90deg)`}
+`;
+
+
 const AccountList: React.FC = () => {
   const {
     project,
     active,
   } = useProject();
+  console.log(project, active);
   const accountSelected = active.type === EntityType.Account
 
   const location = useLocation();
   const params = getParams(location.search)
   const projectPath = isUUUID(project.id) ? project.id : "local"
+  console.log(projectPath, navigate);
 
   return (
     <Root>
@@ -50,25 +96,33 @@ const AccountList: React.FC = () => {
           const contractName = getDeployedContracts(account)
           const title = contractName
             ? `${contractName} is deployed to this account`
-            : `This account don't have any contracts`
+            : `This account doesn't have any contracts`
           const typeName = account.__typename
           return (
-            <Item
-              key={id}
-              title={title}
-              active={isActive}
-              onClick={() => navigate(`/${projectPath}?type=account&id=${id}`)}
-            >
-              <AccountCard>
-                <Avatar seed={project.seed} index={i} />
-                <Stack>
-                  <strong>{accountAddress}</strong>
-                  <small>{contractName || '--'}</small>
-                </Stack>
+            <>
+              <Item
+                key={id}
+                title={title}
+                active={isActive && false}
+                //onClick={() => navigate(`/${projectPath}?type=account&id=${id}`)}
+              >
+                <AccountCard>
+                  <Avatar seed={project.seed} index={i} />
+                  <Stack>
+                    <strong>{accountAddress}</strong>
+                    <small>{contractName || '--'}</small>
+                  </Stack>
 
-                {isActive && <ExportButton id={account.id} typeName={typeName}/>}
-              </AccountCard>
-            </Item>
+                  {isActive && <ExportButton id={account.id} typeName={typeName}/>}
+                  <IconArrowContainer open={i == 0}><IconArrow size={`0.8em`} /></IconArrowContainer>
+                </AccountCard>
+              </Item>
+              {i == 0 && <Dropdown>
+                <DropdownItem active={true}>contract2</DropdownItem>
+                <DropdownItem>contract3</DropdownItem>
+                <DropdownItem>contract4</DropdownItem>
+              </Dropdown>}
+            </>
           );
         })}
       </Items>
