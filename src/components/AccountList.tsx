@@ -13,7 +13,7 @@ import styled from "@emotion/styled";
 import {ExportButton} from "components/ExportButton";
 import {getParams, isUUUID} from "../util/url";
 import theme from "../theme";
-import { VscChevronRight, VscAdd, VscChromeClose, VscOutput } from "react-icons/vsc";
+import { VscChevronLeft, VscAdd, VscChromeClose, VscOutput } from "react-icons/vsc";
 
 function getDeployedContracts(account: Account): string {
   const contracts = account.deployedContracts.map(
@@ -37,17 +37,19 @@ type ItemProps = {
   active?: boolean;
   children?: React.ReactNode;
 };
-const DropdownItem = styled.div<ItemProps>`
-  padding:1em;
-  padding-left:1rem;
+
+const DropdownItemContainer = styled.div<ItemProps>`
+  & .dropdown_delete_button{
+    display:none;
+  }
+
+  &:hover .dropdown_delete_button{
+    display:block;
+  }
+
+  padding-left:2em;
   color:#6a6a6a;
-
-  display:flex;
-  flex-direction:row;
-  align-items: center;
-  //justify-content: space-between;
   
-
   background:white;
   &:hover{
     cursor:pointer;
@@ -71,7 +73,17 @@ const DropdownItem = styled.div<ItemProps>`
     background: ${theme.colors.primary};
   }`};
   position: relative;
-`
+`;
+const DropdownItem = styled.div`
+  padding: .6em 1rem;
+  padding-left:1rem;
+  border-left:1px solid gainsboro;
+
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+  //justify-content: space-between;
+`;
 
 const IconArrowContainer = styled.div`
   align-self:center;
@@ -82,8 +94,8 @@ const IconArrowContainer = styled.div`
   padding:0 0.3em 0 0.3em;
 `;
 
-const ArrowIcon = styled(VscChevronRight)<{ open?: boolean;}>`
-  transform: ${p => p.open ? `rotate(90deg)` : `rotate(0deg)`};
+const ArrowIcon = styled(VscChevronLeft)<{ open?: boolean;}>`
+  transform: ${p => p.open ? `rotate(-90deg)` : `rotate(0deg)`};
   transition: transform 0.2s;
 `;
 
@@ -129,7 +141,6 @@ const AccountList: React.FC = () => {
                 onClick={() => setListsOpen(changeAtIndexAndCopyArr(listsOpen, i, !listsOpen[i]))}
               >
                 <AccountCard onClick={() => setListsOpen(changeAtIndexAndCopyArr(listsOpen, i, !listsOpen[i]))}>
-                  <IconArrowContainer><ArrowIcon open={listsOpen[i]} size={`1em`} /></IconArrowContainer>
                   <Avatar seed={project.seed} index={i} />
                   <Stack>
                     <strong>{accountAddress}</strong>
@@ -138,12 +149,13 @@ const AccountList: React.FC = () => {
 
                   <IconArrowContainer><VscAdd size={`.8em`} /></IconArrowContainer>
                   {isActive && <ExportButton id={account.id} typeName={typeName}/>}
+                  <IconArrowContainer><ArrowIcon open={listsOpen[i]} size={`1em`} /></IconArrowContainer>
                   
                 </AccountCard>
               </Item>
               {listsOpen[i] && <Dropdown>
                 {new Array(i + 1).fill(1).map((_, contract_i) => 
-                  <DropdownItem active={i==0 && contract_i == 0}><IconArrowContainer style={{paddingRight:`1rem`}}><VscOutput /></IconArrowContainer><div>contract {contract_i}</div><IconArrowContainer style={{marginLeft:`auto`}}><VscChromeClose color={`#f44336`} size={`.8em`} /></IconArrowContainer></DropdownItem>
+                  <DropdownItemContainer  active={i==0 && contract_i == 0}><DropdownItem ><IconArrowContainer style={{paddingRight:`1rem`}}><VscOutput /></IconArrowContainer><div>contract {contract_i}</div><IconArrowContainer className={`dropdown_delete_button`} style={{marginLeft:`auto`}}><VscChromeClose color={`#f44336`} size={`.8em`} /></IconArrowContainer></DropdownItem></DropdownItemContainer>
                 )}
               </Dropdown>}
             </>
