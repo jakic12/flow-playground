@@ -48,17 +48,3 @@ export const IconCadence = (props: IconSVGProps) => {
     </Cadence>
   )
 }
-
-export const IconArrow = (props: IconSVGProps) => {
-  const {title, size} = props;
-  return (
-    <IconSVG size={size} version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px"
-    viewBox="0 0 487 487" >
-      {title && <title>{title}</title>}
-      <g>
-        <path fill="#6a6a6a" d="M397.7,376.1c20.4,20.4,53.6,20.4,74,0s20.4-53.6,0-74L280.5,110.9c-20.4-20.4-53.6-20.4-74,0L15.3,302.1
-          c-20.4,20.4-20.4,53.6,0,74s53.6,20.4,74,0l154.2-154.2L397.7,376.1z"/>
-      </g>
-    </IconSVG>
-  )
-}

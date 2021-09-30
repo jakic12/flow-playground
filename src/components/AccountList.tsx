@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {navigate, useLocation} from "@reach/router"
 import {Account} from "api/apollo/generated/graphql";
 import {EntityType} from "providers/Project";
@@ -13,7 +13,7 @@ import styled from "@emotion/styled";
 import {ExportButton} from "components/ExportButton";
 import {getParams, isUUUID} from "../util/url";
 import theme from "../theme";
-import { IconArrow } from "./Icons";
+import { VscChevronRight, VscAdd, VscChromeClose, VscOutput } from "react-icons/vsc";
 
 function getDeployedContracts(account: Account): string {
   const contracts = account.deployedContracts.map(
@@ -39,7 +39,14 @@ type ItemProps = {
 };
 const DropdownItem = styled.div<ItemProps>`
   padding:1em;
-  padding-left:3em;
+  padding-left:1rem;
+  color:#6a6a6a;
+
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+  //justify-content: space-between;
+  
 
   background:white;
   &:hover{
@@ -66,10 +73,25 @@ const DropdownItem = styled.div<ItemProps>`
   position: relative;
 `
 
-const IconArrowContainer = styled.div<{ open?: boolean;}>`
+const IconArrowContainer = styled.div`
   align-self:center;
-  ${p => p.open ? `transform: rotate(-180deg)` : `transform: rotate(-90deg)`}
+  &:hover{
+    cursor:pointer;
+  }
+
+  padding:0 0.3em 0 0.3em;
 `;
+
+const ArrowIcon = styled(VscChevronRight)<{ open?: boolean;}>`
+  transform: ${p => p.open ? `rotate(90deg)` : `rotate(0deg)`};
+  transition: transform 0.2s;
+`;
+
+const changeAtIndexAndCopyArr = (a: Array<any>, index: number, value: any) => {
+  const b = JSON.parse(JSON.stringify(a));
+  b[index] = value;
+  return b;
+}
 
 
 const AccountList: React.FC = () => {
@@ -77,13 +99,12 @@ const AccountList: React.FC = () => {
     project,
     active,
   } = useProject();
-  console.log(project, active);
+  const [listsOpen, setListsOpen] = useState(new Array(5).fill(false));
   const accountSelected = active.type === EntityType.Account
 
   const location = useLocation();
   const params = getParams(location.search)
   const projectPath = isUUUID(project.id) ? project.id : "local"
-  console.log(projectPath, navigate);
 
   return (
     <Root>
@@ -105,22 +126,25 @@ const AccountList: React.FC = () => {
                 title={title}
                 active={isActive && false}
                 //onClick={() => navigate(`/${projectPath}?type=account&id=${id}`)}
+                onClick={() => setListsOpen(changeAtIndexAndCopyArr(listsOpen, i, !listsOpen[i]))}
               >
-                <AccountCard>
+                <AccountCard onClick={() => setListsOpen(changeAtIndexAndCopyArr(listsOpen, i, !listsOpen[i]))}>
+                  <IconArrowContainer><ArrowIcon open={listsOpen[i]} size={`1em`} /></IconArrowContainer>
                   <Avatar seed={project.seed} index={i} />
                   <Stack>
                     <strong>{accountAddress}</strong>
                     <small>{contractName || '--'}</small>
                   </Stack>
 
+                  <IconArrowContainer><VscAdd size={`.8em`} /></IconArrowContainer>
                   {isActive && <ExportButton id={account.id} typeName={typeName}/>}
-                  <IconArrowContainer open={i == 0}><IconArrow size={`0.8em`} /></IconArrowContainer>
+                  
                 </AccountCard>
               </Item>
-              {i == 0 && <Dropdown>
-                <DropdownItem active={true}>contract2</DropdownItem>
-                <DropdownItem>contract3</DropdownItem>
-                <DropdownItem>contract4</DropdownItem>
+              {listsOpen[i] && <Dropdown>
+                {new Array(i + 1).fill(1).map((_, contract_i) => 
+                  <DropdownItem active={i==0 && contract_i == 0}><IconArrowContainer style={{paddingRight:`1rem`}}><VscOutput /></IconArrowContainer><div>contract {contract_i}</div><IconArrowContainer style={{marginLeft:`auto`}}><VscChromeClose color={`#f44336`} size={`.8em`} /></IconArrowContainer></DropdownItem>
+                )}
               </Dropdown>}
             </>
           );
