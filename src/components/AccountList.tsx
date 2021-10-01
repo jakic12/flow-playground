@@ -75,7 +75,7 @@ const DropdownItemContainer = styled.div<ItemProps>`
   position: relative;
 `;
 const DropdownItem = styled.div`
-  padding: .6em 1rem;
+  padding: .3em 1rem;
   padding-left:1rem;
   border-left:1px solid gainsboro;
 
@@ -85,13 +85,15 @@ const DropdownItem = styled.div`
   //justify-content: space-between;
 `;
 
-const IconArrowContainer = styled.div`
+const IconCenterContainer = styled.div<{grayHover: boolean}>`
   align-self:center;
   &:hover{
     cursor:pointer;
+
+    ${p => (p.grayHover && 'background: #e6e6e6;border-radius: 5px;')};
   }
 
-  padding:0 0.3em 0 0.3em;
+  padding:5px 5px 5px 5px;
 `;
 
 const ArrowIcon = styled(VscChevronLeft)<{ open?: boolean;}>`
@@ -147,15 +149,21 @@ const AccountList: React.FC = () => {
                     <small>{contractName || '--'}</small>
                   </Stack>
 
-                  <IconArrowContainer><VscAdd size={`.8em`} /></IconArrowContainer>
-                  {isActive && <ExportButton id={account.id} typeName={typeName}/>}
-                  <IconArrowContainer><ArrowIcon open={listsOpen[i]} size={`1em`} /></IconArrowContainer>
+                  <IconCenterContainer grayHover={true}><VscAdd style={{display:`block`}} size={`.9em`} /></IconCenterContainer>
+                  <IconCenterContainer grayHover={false}><ArrowIcon style={{display:`block`}} open={listsOpen[i]} size={`1.2em`} /></IconCenterContainer>
                   
                 </AccountCard>
               </Item>
               {listsOpen[i] && <Dropdown>
                 {new Array(i + 1).fill(1).map((_, contract_i) => 
-                  <DropdownItemContainer  active={i==0 && contract_i == 0}><DropdownItem ><IconArrowContainer style={{paddingRight:`1rem`}}><VscOutput /></IconArrowContainer><div>contract {contract_i}</div><IconArrowContainer className={`dropdown_delete_button`} style={{marginLeft:`auto`}}><VscChromeClose color={`#f44336`} size={`.8em`} /></IconArrowContainer></DropdownItem></DropdownItemContainer>
+                  <DropdownItemContainer  active={i==0 && contract_i == 0}>
+                    <DropdownItem >
+                      <IconCenterContainer grayHover={false} style={{paddingRight:`1rem`}}><VscOutput /></IconCenterContainer>
+                      <div style={{flexShrink:1, overflowWrap: `anywhere`}}>contract{contract_i}</div>
+                      <IconCenterContainer grayHover={false} className={`dropdown_delete_button`} style={{marginLeft:`auto`, padding:0}}><ExportButton id={account.id} typeName={typeName}/></IconCenterContainer>
+                      <IconCenterContainer grayHover={true}  className={`dropdown_delete_button`}><VscChromeClose style={{display:`block`}} color={`#f44336`} size={`.8em`} /></IconCenterContainer>
+                    </DropdownItem>
+                  </DropdownItemContainer>
                 )}
               </Dropdown>}
             </>
