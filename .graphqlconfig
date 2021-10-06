@@ -1,0 +1,15 @@
+{
+  "name": "Flow Playground GraphQL Schema",
+  "schemaPath": "src/api/apollo/local.graphql",
+  "extensions": {
+    "endpoints": {
+      "Local GraphQL Endpoint": {
+        "url": "http://localhost:8080/query",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": false
+      }
+    }
+  }
+}
